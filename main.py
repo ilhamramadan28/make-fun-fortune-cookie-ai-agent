@@ -13,8 +13,10 @@ def main() -> int:
     with open(SRC, "r", encoding="utf-8") as f:
         text = f.read()
     # Guard: the gate is 1-140 chars of UTF-8, not only whitespace, one line.
-    stripped = text.strip()
-    if not 1 <= len(text) <= 140 or not stripped or "\n" in stripped:
+    # entry.txt ends with a newline; measure the entry body without it, so a
+    # full 140-char entry is not wrongly rejected for its trailing newline.
+    body = text[:-1] if text.endswith("\n") else text
+    if not 1 <= len(body) <= 140 or not body.strip() or "\n" in body:
         print("entry fails gate: must be 1-140 chars, not only whitespace, one line",
               file=sys.stderr)
         return 1
